@@ -189,5 +189,153 @@ export const conversationApi = {
     }
     
     return truncated + '...';
+  },
+
+  /**
+   * Rename a conversation
+   */
+  renameConversation: (conversationId: string, newTitle: string): void => {
+    try {
+      conversationApi.updateConversationMetadata(conversationId, {
+        title: newTitle.trim()
+      });
+    } catch (error) {
+      console.error('Error renaming conversation:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Archive or unarchive a conversation
+   */
+  archiveConversation: (conversationId: string, archived: boolean): void => {
+    try {
+      const conversations = conversationApi.getAllConversations();
+      const index = conversations.findIndex(c => c.id === conversationId);
+      
+      if (index !== -1) {
+        conversations[index] = {
+          ...conversations[index],
+          archived
+        };
+        localStorage.setItem(CONVERSATIONS_KEY, JSON.stringify(conversations));
+      }
+    } catch (error) {
+      console.error('Error archiving conversation:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Search conversations by title or content
+   */
+  searchConversations: (query: string): Conversation[] => {
+    try {
+      if (!query.trim()) {
+        return conversationApi.getAllConversations();
+      }
+
+      const searchTerm = query.toLowerCase().trim();
+      const allConversations = conversationApi.getAllConversations();
+      
+      return allConversations.filter(conv => {
+        // Search in title
+        if (conv.title.toLowerCase().includes(searchTerm)) {
+          return true;
+        }
+        
+        // Search in last message
+        if (conv.lastMessage.toLowerCase().includes(searchTerm)) {
+          return true;
+        }
+        
+        // Search in full conversation content
+        const messages = conversationApi.loadConversation(conv.id);
+        return messages.some(msg => 
+          msg.content.toLowerCase().includes(searchTerm)
+        );
+      });
+    } catch (error) {
+      console.error('Error searching conversations:', error);
+      return [];
+    }
+  },
+
+  /**
+   * Export conversation as text
+   */
+  exportAsText: (conversationId: string): string => {
+    try {
+      const conversations = conversationApi.getAllConversations();
+      const conversation = conversations.find(c => c.id === conversationId);
+      
+      if (!conversation) {
+        throw new Error('Conversation not found');
+      }
+
+      const messages = conversationApi.loadConversation(conversationId);
+      
+      let text = `${conversation.title}\n`;
+      text += `Date: ${conversation.timestamp.toLocaleDateString()}\n`;
+      text += `Language: ${conversation.language}\n`;
+      text += `${'='.repeat(60)}\n\n`;
+      
+      messages.forEach((msg, index) => {
+        const role = msg.role === 'user' ? 'You' : 'Labor Law Assistant';
+        const time = msg.timestamp.toLocaleTimeString();
+        
+        text += `[${time}] ${role}:\n`;
+        text += `${msg.content}\n`;
+        
+        if (msg.citations && msg.citations.length > 0) {
+          text += `\nCitations:\n`;
+          msg.citations.forEach(citation => {
+            text += `- ${citation.source}${citation.article ? ` (${citation.article})` : ''}\n`;
+            if (citation.url) {
+              text += `  ${citation.url}\n`;
+            }
+          });
+        }
+        
+        if (index < messages.length - 1) {
+          text += `\n${'-'.repeat(60)}\n\n`;
+        }
+      });
+      
+      text += `\n${'='.repeat(60)}\n`;
+      text += `Exported on: ${new Date().toLocaleString()}\n`;
+      text += `Total messages: ${messages.length}\n`;
+      
+      return text;
+    } catch (error) {
+      console.error('Error exporting conversation as text:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Get archived conversations
+   */
+  getArchivedConversations: (): Conversation[] => {
+    try {
+      const allConversations = conversationApi.getAllConversations();
+      return allConversations.filter(conv => conv.archived === true);
+    } catch (error) {
+      console.error('Error getting archived conversations:', error);
+      return [];
+    }
+  },
+
+  /**
+   * Get active (non-archived) conversations
+   */
+  getActiveConversations: (): Conversation[] => {
+    try {
+      const allConversations = conversationApi.getAllConversations();
+      return allConversations.filter(conv => !conv.archived);
+    } catch (error) {
+      console.error('Error getting active conversations:', error);
+      return [];
+    }
   }
 };

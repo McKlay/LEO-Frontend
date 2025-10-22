@@ -23,7 +23,17 @@ export const translations = {
       'How do I file a labor complaint?',
       'Am I entitled to overtime pay?',
       'What is the minimum wage in my region?'
-    ]
+    ],
+    rename: 'Rename',
+    archive: 'Archive',
+    delete: 'Delete',
+    export: 'Export',
+    search: 'Search conversations',
+    showArchived: 'Show Archived',
+    hideArchived: 'Hide Archived',
+    noConversations: 'No conversations yet',
+    noSearchResults: 'No conversations found',
+    archived: 'Archived'
   },
   fil: {
     appTitle: 'Legal na Katulong',
@@ -47,7 +57,17 @@ export const translations = {
       'Paano mag-file ng labor complaint?',
       'May karapatan ba ako sa overtime pay?',
       'Ano ang minimum wage sa aking rehiyon?'
-    ]
+    ],
+    rename: 'Palitan ang Pangalan',
+    archive: 'I-archive',
+    delete: 'Tanggalin',
+    export: 'I-export',
+    search: 'Maghanap ng pag-uusap',
+    showArchived: 'Ipakita ang Na-archive',
+    hideArchived: 'Itago ang Na-archive',
+    noConversations: 'Wala pang mga pag-uusap',
+    noSearchResults: 'Walang nahanap na pag-uusap',
+    archived: 'Naka-archive'
   },
   ceb: {
     appTitle: 'Legal nga Tabang',
@@ -71,7 +91,17 @@ export const translations = {
       'Unsaon pag-file og labor complaint?',
       'Dunay ba koy katungod sa overtime pay?',
       'Unsa ang minimum wage sa akong rehiyon?'
-    ]
+    ],
+    rename: 'Usba ang Ngalan',
+    archive: 'I-archive',
+    delete: 'Tangtangon',
+    export: 'I-export',
+    search: 'Pangitag conversation',
+    showArchived: 'Ipakita ang Naka-archive',
+    hideArchived: 'Itago ang Naka-archive',
+    noConversations: 'Walay mga conversation pa',
+    noSearchResults: 'Walay nakit-an nga conversation',
+    archived: 'Naka-archive'
   }
 };
 

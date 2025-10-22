@@ -13,7 +13,21 @@ import { Bot } from 'lucide-react';
 
 function ChatInterface() {
   const { language, setLanguage } = useLanguage();
-  const { messages, conversations, currentConversationId, isTyping, sendMessage, createNewConversation, selectConversation } = useChat();
+  const { 
+    messages, 
+    conversations, 
+    currentConversationId, 
+    isTyping, 
+    showArchived,
+    sendMessage, 
+    createNewConversation, 
+    selectConversation,
+    deleteConversation,
+    renameConversation,
+    archiveConversation,
+    exportConversation,
+    toggleShowArchived
+  } = useChat();
   const { isSidebarOpen, toggleSidebar, closeSidebar } = useUI();
 
   return (
@@ -24,6 +38,12 @@ function ChatInterface() {
         currentConversationId={currentConversationId}
         onNewChat={createNewConversation}
         onSelectConversation={selectConversation}
+        onRenameConversation={renameConversation}
+        onArchiveConversation={archiveConversation}
+        onDeleteConversation={deleteConversation}
+        onExportConversation={exportConversation}
+        showArchived={showArchived}
+        onToggleArchived={toggleShowArchived}
         isOpen={isSidebarOpen}
         onClose={closeSidebar}
       />

@@ -21,6 +21,9 @@ export interface Conversation {
   lastMessage: string;
   timestamp: Date;
   language: 'en' | 'fil' | 'ceb';
+  archived?: boolean;
 }
 
 export type Language = 'en' | 'fil' | 'ceb';
+
+export type ConversationExportFormat = 'txt' | 'pdf' | 'json';

@@ -10,9 +10,16 @@ interface ChatContextType {
   currentConversationId: string | null;
   isTyping: boolean;
   error: AppError | null;
+  showArchived: boolean;
   sendMessage: (content: string) => Promise<void>;
   createNewConversation: () => void;
   selectConversation: (id: string) => void;
+  deleteConversation: (id: string) => void;
+  renameConversation: (id: string, newTitle: string) => void;
+  archiveConversation: (id: string, archived: boolean) => void;
+  searchConversations: (query: string) => Conversation[];
+  exportConversation: (id: string, format: 'txt') => void;
+  toggleShowArchived: () => void;
   clearError: () => void;
 }
 
@@ -29,10 +36,15 @@ export const ChatProvider = ({ children, language }: ChatProviderProps) => {
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [isTyping, setIsTyping] = useState(false);
   const [error, setError] = useState<AppError | null>(null);
+  const [showArchived, setShowArchived] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const clearError = () => {
     setError(null);
+  };
+
+  const toggleShowArchived = () => {
+    setShowArchived(prev => !prev);
   };
 
   // Load conversations and current conversation on mount
@@ -140,6 +152,97 @@ export const ChatProvider = ({ children, language }: ChatProviderProps) => {
     setMessages(loadedMessages);
   };
 
+  const deleteConversation = (id: string) => {
+    try {
+      conversationApi.deleteConversation(id);
+      
+      // Refresh conversations list
+      const updatedConversations = conversationApi.getAllConversations();
+      setConversations(updatedConversations);
+      
+      // If deleted conversation was current, clear it
+      if (currentConversationId === id) {
+        setMessages([]);
+        setCurrentConversationId(null);
+      }
+    } catch (err) {
+      const appError = createAppError(err, ErrorCode.STORAGE_ERROR);
+      setError(appError);
+      logError(appError, 'deleteConversation');
+    }
+  };
+
+  const renameConversation = (id: string, newTitle: string) => {
+    try {
+      conversationApi.renameConversation(id, newTitle);
+      
+      // Refresh conversations list
+      const updatedConversations = conversationApi.getAllConversations();
+      setConversations(updatedConversations);
+    } catch (err) {
+      const appError = createAppError(err, ErrorCode.STORAGE_ERROR);
+      setError(appError);
+      logError(appError, 'renameConversation');
+    }
+  };
+
+  const archiveConversation = (id: string, archived: boolean) => {
+    try {
+      conversationApi.archiveConversation(id, archived);
+      
+      // Refresh conversations list
+      const updatedConversations = conversationApi.getAllConversations();
+      setConversations(updatedConversations);
+      
+      // If archived conversation was current, clear it
+      if (archived && currentConversationId === id) {
+        setMessages([]);
+        setCurrentConversationId(null);
+      }
+    } catch (err) {
+      const appError = createAppError(err, ErrorCode.STORAGE_ERROR);
+      setError(appError);
+      logError(appError, 'archiveConversation');
+    }
+  };
+
+  const searchConversations = (query: string): Conversation[] => {
+    try {
+      return conversationApi.searchConversations(query);
+    } catch (err) {
+      const appError = createAppError(err, ErrorCode.STORAGE_ERROR);
+      setError(appError);
+      logError(appError, 'searchConversations');
+      return [];
+    }
+  };
+
+  const exportConversation = (id: string, format: 'txt') => {
+    try {
+      const text = conversationApi.exportAsText(id);
+      
+      // Create blob and download
+      const blob = new Blob([text], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      
+      const conversations = conversationApi.getAllConversations();
+      const conversation = conversations.find((c: Conversation) => c.id === id);
+      const filename = `${conversation?.title || 'conversation'}_${new Date().toISOString().split('T')[0]}.txt`;
+      
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      const appError = createAppError(err, ErrorCode.STORAGE_ERROR);
+      setError(appError);
+      logError(appError, 'exportConversation');
+    }
+  };
+
   return (
     <ChatContext.Provider
       value={{
@@ -148,9 +251,16 @@ export const ChatProvider = ({ children, language }: ChatProviderProps) => {
         currentConversationId,
         isTyping,
         error,
+        showArchived,
         sendMessage,
         createNewConversation,
         selectConversation,
+        deleteConversation,
+        renameConversation,
+        archiveConversation,
+        searchConversations,
+        exportConversation,
+        toggleShowArchived,
         clearError
       }}
     >

@@ -98,13 +98,14 @@ Copy this checklist into your task tracker (GitHub Issues, Jira, etc.) or use it
 
 ## 🟢 PRIORITY 3: ENHANCEMENTS (Week 5+)
 
-### Conversation Management
-- [ ] Search conversations
-- [ ] Export conversation (PDF, TXT)
-- [ ] Email conversation transcript
-- [ ] Archive conversations
-- [ ] Delete conversations
-- [ ] Rename conversations
+### Conversation Management ✅ COMPLETE
+- [x] Search conversations
+- [x] Export conversation (TXT format)
+- [x] Rename conversations
+- [x] Archive conversations
+- [x] Delete conversations
+- [ ] Email conversation transcript (deferred)
+- [ ] Export as PDF (requires library, deferred)
 
 ### Accessibility
 - [ ] Add ARIA labels to all interactive elements

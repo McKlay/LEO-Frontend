@@ -1,6 +1,9 @@
-import { MessageSquare, Plus, Settings, User, Clock } from 'lucide-react';
+import { MessageSquare, Plus, Settings, User, Clock, Archive as ArchiveIcon } from 'lucide-react';
+import { useState } from 'react';
 import { Conversation, Language } from '../types/chat';
 import { getTranslation } from '../utils/i18n';
+import SearchBar from './Common/SearchBar';
+import ConversationMenu from './Common/ConversationMenu';
 
 interface SidebarProps {
   language: Language;
@@ -8,6 +11,12 @@ interface SidebarProps {
   currentConversationId: string | null;
   onNewChat: () => void;
   onSelectConversation: (id: string) => void;
+  onRenameConversation: (id: string, newTitle: string) => void;
+  onArchiveConversation: (id: string, archived: boolean) => void;
+  onDeleteConversation: (id: string) => void;
+  onExportConversation: (id: string, format: 'txt') => void;
+  showArchived: boolean;
+  onToggleArchived: () => void;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -18,9 +27,39 @@ export default function Sidebar({
   currentConversationId,
   onNewChat,
   onSelectConversation,
+  onRenameConversation,
+  onArchiveConversation,
+  onDeleteConversation,
+  onExportConversation,
+  showArchived,
+  onToggleArchived,
   isOpen,
   onClose
 }: SidebarProps) {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<Conversation[]>([]);
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    if (query.trim()) {
+      const filtered = conversations.filter(conv => {
+        const matchesQuery = 
+          conv.title.toLowerCase().includes(query.toLowerCase()) ||
+          conv.lastMessage.toLowerCase().includes(query.toLowerCase());
+        const matchesArchiveFilter = showArchived || !conv.archived;
+        return matchesQuery && matchesArchiveFilter;
+      });
+      setSearchResults(filtered);
+    } else {
+      setSearchResults([]);
+    }
+  };
+
+  // Get the conversations to display
+  const displayConversations = searchQuery.trim() 
+    ? searchResults 
+    : conversations.filter(conv => showArchived || !conv.archived);
+
   return (
     <>
       {isOpen && (
@@ -35,13 +74,30 @@ export default function Sidebar({
           isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`}
       >
-        <div className="p-4 border-b border-slate-800">
+        <div className="p-4 border-b border-slate-800 space-y-3">
           <button
             onClick={onNewChat}
             className="w-full flex items-center gap-3 px-4 py-3 bg-sky-600 hover:bg-sky-700 rounded-lg transition-colors duration-200 font-medium"
           >
             <Plus size={20} />
             {getTranslation(language, 'newChat')}
+          </button>
+
+          <SearchBar language={language} onSearch={handleSearch} />
+          
+          <button
+            onClick={onToggleArchived}
+            className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg transition-colors duration-200 text-sm ${
+              showArchived 
+                ? 'bg-slate-800 text-sky-400' 
+                : 'hover:bg-slate-800 text-slate-400'
+            }`}
+          >
+            <ArchiveIcon size={16} />
+            {showArchived 
+              ? getTranslation(language, 'hideArchived') 
+              : getTranslation(language, 'showArchived')
+            }
           </button>
         </div>
 
@@ -51,33 +107,63 @@ export default function Sidebar({
           </h2>
 
           <div className="space-y-2">
-            {conversations.length === 0 ? (
+            {displayConversations.length === 0 ? (
               <p className="text-sm text-slate-500 italic py-4 text-center">
-                {language === 'en' ? 'No conversations yet' : 'Wala pang mga pag-uusap'}
+                {searchQuery.trim() 
+                  ? getTranslation(language, 'noSearchResults')
+                  : getTranslation(language, 'noConversations')
+                }
               </p>
             ) : (
-              conversations.map((conv) => (
-                <button
+              displayConversations.map((conv) => (
+                <div
                   key={conv.id}
-                  onClick={() => onSelectConversation(conv.id)}
-                  className={`w-full text-left px-3 py-2.5 rounded-lg transition-all duration-200 group ${
+                  className={`group relative rounded-lg transition-all duration-200 ${
                     currentConversationId === conv.id
-                      ? 'bg-slate-800 text-white'
-                      : 'hover:bg-slate-800/50 text-slate-300'
+                      ? 'bg-slate-800'
+                      : 'hover:bg-slate-800/50'
                   }`}
                 >
-                  <div className="flex items-start gap-2">
-                    <MessageSquare size={16} className="mt-1 flex-shrink-0 text-sky-400" />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">{conv.title}</p>
-                      <p className="text-xs text-slate-500 truncate mt-0.5">{conv.lastMessage}</p>
-                      <div className="flex items-center gap-1 mt-1 text-xs text-slate-600">
-                        <Clock size={12} />
-                        {new Date(conv.timestamp).toLocaleDateString(language === 'en' ? 'en-US' : 'fil-PH')}
+                  <button
+                    onClick={() => onSelectConversation(conv.id)}
+                    className="w-full text-left px-3 py-2.5 pr-10"
+                  >
+                    <div className="flex items-start gap-2">
+                      <MessageSquare 
+                        size={16} 
+                        className={`mt-1 flex-shrink-0 ${conv.archived ? 'text-slate-500' : 'text-sky-400'}`} 
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className={`text-sm font-medium truncate ${conv.archived ? 'text-slate-400' : 'text-slate-100'}`}>
+                          {conv.title}
+                          {conv.archived && (
+                            <span className="ml-2 text-xs text-slate-500">
+                              ({getTranslation(language, 'archived')})
+                            </span>
+                          )}
+                        </p>
+                        <p className="text-xs text-slate-500 truncate mt-0.5">{conv.lastMessage}</p>
+                        <div className="flex items-center gap-1 mt-1 text-xs text-slate-600">
+                          <Clock size={12} />
+                          {new Date(conv.timestamp).toLocaleDateString(language === 'en' ? 'en-US' : 'fil-PH')}
+                        </div>
                       </div>
                     </div>
+                  </button>
+
+                  <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                    <ConversationMenu
+                      conversationId={conv.id}
+                      conversationTitle={conv.title}
+                      isArchived={conv.archived}
+                      language={language}
+                      onRename={onRenameConversation}
+                      onArchive={onArchiveConversation}
+                      onDelete={onDeleteConversation}
+                      onExport={onExportConversation}
+                    />
                   </div>
-                </button>
+                </div>
               ))
             )}
           </div>
