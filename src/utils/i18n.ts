@@ -33,7 +33,19 @@ export const translations = {
     hideArchived: 'Hide Archived',
     noConversations: 'No conversations yet',
     noSearchResults: 'No conversations found',
-    archived: 'Archived'
+    archived: 'Archived',
+    rateThisAnswer: 'Rate this answer',
+    flagIncorrect: 'Flag as incorrect',
+    feedbackThankYou: 'Thank you for your feedback!',
+    flagReason: 'What\'s wrong with this answer?',
+    flagReasonIncorrectLaw: 'Incorrect law or citation',
+    flagReasonMisleading: 'Misleading or incomplete information',
+    flagReasonNotClear: 'Not clear or hard to understand',
+    flagReasonOther: 'Other (please specify)',
+    submitFlag: 'Submit Report',
+    cancelFlag: 'Cancel',
+    flagged: 'Flagged',
+    additionalDetails: 'Additional details (optional)'
   },
   fil: {
     appTitle: 'Legal na Katulong',
@@ -67,7 +79,19 @@ export const translations = {
     hideArchived: 'Itago ang Na-archive',
     noConversations: 'Wala pang mga pag-uusap',
     noSearchResults: 'Walang nahanap na pag-uusap',
-    archived: 'Naka-archive'
+    archived: 'Naka-archive',
+    rateThisAnswer: 'I-rate ang sagot na ito',
+    flagIncorrect: 'I-flag bilang mali',
+    feedbackThankYou: 'Salamat sa iyong feedback!',
+    flagReason: 'Ano ang mali sa sagot na ito?',
+    flagReasonIncorrectLaw: 'Maling batas o citation',
+    flagReasonMisleading: 'Nakakalito o hindi kumpleto ang impormasyon',
+    flagReasonNotClear: 'Hindi malinaw o mahirap maintindihan',
+    flagReasonOther: 'Iba pa (mangyaring tukuyin)',
+    submitFlag: 'Isumite ang Ulat',
+    cancelFlag: 'Kanselahin',
+    flagged: 'Na-flag',
+    additionalDetails: 'Karagdagang detalye (opsyonal)'
   },
   ceb: {
     appTitle: 'Legal nga Tabang',
@@ -101,7 +125,19 @@ export const translations = {
     hideArchived: 'Itago ang Naka-archive',
     noConversations: 'Walay mga conversation pa',
     noSearchResults: 'Walay nakit-an nga conversation',
-    archived: 'Naka-archive'
+    archived: 'Naka-archive',
+    rateThisAnswer: 'I-rate kining tubag',
+    flagIncorrect: 'I-flag isip sayop',
+    feedbackThankYou: 'Salamat sa imong feedback!',
+    flagReason: 'Unsa ang sayop niining tubag?',
+    flagReasonIncorrectLaw: 'Sayop nga balaod o citation',
+    flagReasonMisleading: 'Nakalibog o dili kompleto ang impormasyon',
+    flagReasonNotClear: 'Dili klaro o lisod sabton',
+    flagReasonOther: 'Lain pa (palihug tukoya)',
+    submitFlag: 'Isumite ang Taho',
+    cancelFlag: 'Kanselahin',
+    flagged: 'Na-flag',
+    additionalDetails: 'Dugang nga detalye (opsyonal)'
   }
 };
 

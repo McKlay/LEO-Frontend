@@ -1,7 +1,8 @@
 import { createContext, useState, ReactNode, useRef, useEffect } from 'react';
-import { Message, Conversation, Language } from '../types/chat';
+import { Message, Conversation, Language, FeedbackData } from '../types/chat';
 import { chatApi } from '../services/api/chatApi';
 import { conversationApi } from '../services/api/conversationApi';
+import { saveFeedback } from '../services/api/feedbackApi';
 import { AppError, createAppError, ErrorCode, logError } from '../services/utils/errorHandler';
 
 interface ChatContextType {
@@ -21,6 +22,8 @@ interface ChatContextType {
   exportConversation: (id: string, format: 'txt') => void;
   toggleShowArchived: () => void;
   clearError: () => void;
+  rateMessage: (messageId: string, rating: 1 | 2 | 3 | 4 | 5) => void;
+  flagMessage: (messageId: string, reason: string, details: string) => void;
 }
 
 export const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -243,6 +246,80 @@ export const ChatProvider = ({ children, language }: ChatProviderProps) => {
     }
   };
 
+  const rateMessage = (messageId: string, rating: 1 | 2 | 3 | 4 | 5) => {
+    try {
+      if (!currentConversationId) return;
+
+      // Update message with feedback
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === messageId
+            ? {
+                ...msg,
+                feedback: {
+                  ...msg.feedback,
+                  rating,
+                  timestamp: new Date()
+                }
+              }
+            : msg
+        )
+      );
+
+      // Save feedback data
+      const feedbackData: FeedbackData = {
+        messageId,
+        conversationId: currentConversationId,
+        rating,
+        timestamp: new Date(),
+        language
+      };
+      saveFeedback(feedbackData);
+    } catch (err) {
+      const appError = createAppError(err, ErrorCode.STORAGE_ERROR);
+      setError(appError);
+      logError(appError, 'rateMessage');
+    }
+  };
+
+  const flagMessage = (messageId: string, reason: string, details: string) => {
+    try {
+      if (!currentConversationId) return;
+
+      // Update message with flag
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === messageId
+            ? {
+                ...msg,
+                feedback: {
+                  ...msg.feedback,
+                  flagged: true,
+                  flagReason: `${reason}${details ? ` - ${details}` : ''}`,
+                  timestamp: new Date()
+                }
+              }
+            : msg
+        )
+      );
+
+      // Save feedback data
+      const feedbackData: FeedbackData = {
+        messageId,
+        conversationId: currentConversationId,
+        flagged: true,
+        flagReason: `${reason}${details ? ` - ${details}` : ''}`,
+        timestamp: new Date(),
+        language
+      };
+      saveFeedback(feedbackData);
+    } catch (err) {
+      const appError = createAppError(err, ErrorCode.STORAGE_ERROR);
+      setError(appError);
+      logError(appError, 'flagMessage');
+    }
+  };
+
   return (
     <ChatContext.Provider
       value={{
@@ -261,7 +338,9 @@ export const ChatProvider = ({ children, language }: ChatProviderProps) => {
         searchConversations,
         exportConversation,
         toggleShowArchived,
-        clearError
+        clearError,
+        rateMessage,
+        flagMessage
       }}
     >
       {children}

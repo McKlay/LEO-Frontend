@@ -31,7 +31,9 @@ function ChatInterface() {
     renameConversation,
     archiveConversation,
     exportConversation,
-    toggleShowArchived
+    toggleShowArchived,
+    rateMessage,
+    flagMessage
   } = useChat();
   const { isSidebarOpen, toggleSidebar, closeSidebar } = useUI();
   const { announceToScreenReader } = useAccessibility();
@@ -123,7 +125,14 @@ function ChatInterface() {
           ) : (
             <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
               {messages.map((message) => (
-                <ChatMessage key={message.id} message={message} language={language} />
+                <ChatMessage 
+                  key={message.id} 
+                  message={message} 
+                  language={language} 
+                  conversationId={currentConversationId || ''}
+                  onRateMessage={rateMessage}
+                  onFlagMessage={flagMessage}
+                />
               ))}
 
               {isTyping && (

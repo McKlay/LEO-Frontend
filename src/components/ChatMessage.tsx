@@ -1,9 +1,11 @@
-import { User, Bot, ChevronDown, ChevronUp, ExternalLink, BookOpen } from 'lucide-react';
+import { User, Bot, ChevronDown, ChevronUp, ExternalLink, BookOpen, Flag } from 'lucide-react';
 import { Message, Language } from '../types/chat';
 import { getTranslation } from '../utils/i18n';
 import { useState } from 'react';
 import ContactModal from './Common/ContactModal';
 import FormModal from './Common/FormModal';
+import FeedbackRating from './Common/FeedbackRating';
+import FlagModal from './Common/FlagModal';
 import { COMMON_ACTIONS } from '../types/actions';
 import type { ContactActionData, FormActionData } from '../types/actions';
 import { getRelatedResources, getCitationShortRef, isValidUrl } from '../services/utils/citationUtils';
@@ -11,12 +13,16 @@ import { getRelatedResources, getCitationShortRef, isValidUrl } from '../service
 interface ChatMessageProps {
   message: Message;
   language: Language;
+  conversationId: string;
+  onRateMessage: (messageId: string, rating: 1 | 2 | 3 | 4 | 5) => void;
+  onFlagMessage: (messageId: string, reason: string, details: string) => void;
 }
 
-export default function ChatMessage({ message, language }: ChatMessageProps) {
+export default function ChatMessage({ message, language, conversationId, onRateMessage, onFlagMessage }: ChatMessageProps) {
   const [showCitations, setShowCitations] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
   const [showFormModal, setShowFormModal] = useState(false);
+  const [showFlagModal, setShowFlagModal] = useState(false);
   const [activeContactData, setActiveContactData] = useState<ContactActionData | null>(null);
   const [activeFormData, setActiveFormData] = useState<FormActionData | null>(null);
   const isUser = message.role === 'user';
@@ -154,6 +160,37 @@ export default function ChatMessage({ message, language }: ChatMessageProps) {
               minute: '2-digit'
             })}
           </p>
+
+          {/* Feedback Section - Only for bot messages */}
+          {!isUser && (
+            <div className="mt-4 pt-3 border-t border-slate-200 space-y-3">
+              {/* Rating */}
+              <FeedbackRating
+                messageId={message.id}
+                currentRating={message.feedback?.rating}
+                language={language}
+                onRate={onRateMessage}
+              />
+
+              {/* Flag Button */}
+              <div className="flex items-center gap-2">
+                {message.feedback?.flagged ? (
+                  <div className="flex items-center gap-1.5 text-xs text-amber-600">
+                    <Flag size={14} className="fill-amber-600" />
+                    <span className="font-medium">{getTranslation(language, 'flagged')}</span>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setShowFlagModal(true)}
+                    className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-amber-600 transition-colors group"
+                  >
+                    <Flag size={14} className="group-hover:fill-amber-100 transition-all" />
+                    <span>{getTranslation(language, 'flagIncorrect')}</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -181,6 +218,14 @@ export default function ChatMessage({ message, language }: ChatMessageProps) {
           language={language}
         />
       )}
+
+      {/* Flag Modal */}
+      <FlagModal
+        isOpen={showFlagModal}
+        onClose={() => setShowFlagModal(false)}
+        onSubmit={(reason, details) => onFlagMessage(message.id, reason, details)}
+        language={language}
+      />
     </div>
   );
 }

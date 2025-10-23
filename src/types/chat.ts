@@ -5,6 +5,7 @@ export interface Message {
   timestamp: Date;
   citations?: Citation[];
   suggestions?: string[];
+  feedback?: MessageFeedback;
 }
 
 export interface Citation {
@@ -27,3 +28,20 @@ export interface Conversation {
 export type Language = 'en' | 'fil' | 'ceb';
 
 export type ConversationExportFormat = 'txt' | 'pdf' | 'json';
+
+export interface MessageFeedback {
+  rating?: 1 | 2 | 3 | 4 | 5;
+  flagged?: boolean;
+  flagReason?: string;
+  timestamp: Date;
+}
+
+export interface FeedbackData {
+  messageId: string;
+  conversationId: string;
+  rating?: 1 | 2 | 3 | 4 | 5;
+  flagged?: boolean;
+  flagReason?: string;
+  timestamp: Date;
+  language: Language;
+}

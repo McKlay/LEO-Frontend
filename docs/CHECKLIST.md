@@ -130,8 +130,8 @@ Copy this checklist into your task tracker (GitHub Issues, Jira, etc.) or use it
 - [ ] Toast notifications
 
 ### Advanced Features
-- [ ] User feedback collection (rating system)
-- [ ] Flag incorrect information
+- [x] User feedback collection (rating system)
+- [x] Flag incorrect information
 - [ ] Usage analytics tracking
 - [ ] A/B testing framework
 
