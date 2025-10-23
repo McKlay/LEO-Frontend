@@ -1,3 +1,104 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Screen Reader Only Class */
+@layer utilities {
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+}
+
+/* High Contrast Mode */
+.high-contrast {
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f0f0f0;
+  --color-text-primary: #000000;
+  --color-text-secondary: #1a1a1a;
+  --color-accent: #0066cc;
+  --color-accent-dark: #004499;
+  --color-border: #000000;
+}
+
+.high-contrast body {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+}
+
+.high-contrast .bg-white {
+  background-color: #ffffff !important;
+}
+
+.high-contrast .bg-slate-50,
+.high-contrast .bg-slate-100 {
+  background-color: #f0f0f0 !important;
+}
+
+.high-contrast .text-slate-600,
+.high-contrast .text-slate-700,
+.high-contrast .text-slate-800 {
+  color: #000000 !important;
+}
+
+.high-contrast .bg-sky-600,
+.high-contrast .bg-sky-700 {
+  background-color: #0066cc !important;
+}
+
+.high-contrast .text-sky-600,
+.high-contrast .text-sky-700 {
+  color: #0066cc !important;
+}
+
+.high-contrast .border-slate-200,
+.high-contrast .border-slate-300 {
+  border-color: #000000 !important;
+  border-width: 2px !important;
+}
+
+/* Reduced Motion */
+.reduce-motion * {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* Focus Visible Improvements */
+@layer base {
+  *:focus-visible {
+    outline: 3px solid #0066cc;
+    outline-offset: 2px;
+  }
+
+  .high-contrast *:focus-visible {
+    outline: 3px solid #000000;
+    outline-offset: 3px;
+  }
+}
+
+/* Skip to Content Link */
+.skip-to-content {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  padding: 1rem 2rem;
+  background-color: #0066cc;
+  color: white;
+  text-decoration: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+}
+
+.skip-to-content:focus {
+  top: 1rem;
+}

@@ -7,9 +7,10 @@ interface SearchBarProps {
   language: Language;
   onSearch: (query: string) => void;
   placeholder?: string;
+  inputRef?: React.RefObject<HTMLInputElement>;
 }
 
-export default function SearchBar({ language, onSearch, placeholder }: SearchBarProps) {
+export default function SearchBar({ language, onSearch, placeholder, inputRef }: SearchBarProps) {
   const [query, setQuery] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,6 +37,7 @@ export default function SearchBar({ language, onSearch, placeholder }: SearchBar
       </div>
       
       <input
+        ref={inputRef}
         type="text"
         value={query}
         onChange={handleChange}
@@ -43,6 +45,7 @@ export default function SearchBar({ language, onSearch, placeholder }: SearchBar
         placeholder={placeholder || getTranslation(language, 'search')}
         className="w-full pl-9 pr-9 py-2 bg-slate-800 text-slate-100 text-sm border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent placeholder-slate-500"
         aria-label={getTranslation(language, 'search')}
+        role="searchbox"
       />
       
       {query && (

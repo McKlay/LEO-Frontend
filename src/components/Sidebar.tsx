@@ -19,6 +19,8 @@ interface SidebarProps {
   onToggleArchived: () => void;
   isOpen: boolean;
   onClose: () => void;
+  searchInputRef?: React.RefObject<HTMLInputElement>;
+  onSettingsClick: () => void;
 }
 
 export default function Sidebar({
@@ -34,7 +36,9 @@ export default function Sidebar({
   showArchived,
   onToggleArchived,
   isOpen,
-  onClose
+  onClose,
+  searchInputRef,
+  onSettingsClick
 }: SidebarProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<Conversation[]>([]);
@@ -73,17 +77,24 @@ export default function Sidebar({
         className={`fixed lg:static inset-y-0 left-0 z-50 w-72 bg-slate-900 text-slate-100 flex flex-col transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`}
+        role="complementary"
+        aria-label={language === 'en' ? 'Conversation sidebar' : language === 'fil' ? 'Sidebar ng pag-uusap' : 'Sidebar sa panag-istoryahanay'}
       >
         <div className="p-4 border-b border-slate-800 space-y-3">
           <button
             onClick={onNewChat}
             className="w-full flex items-center gap-3 px-4 py-3 bg-sky-600 hover:bg-sky-700 rounded-lg transition-colors duration-200 font-medium"
+            aria-label={language === 'en' ? 'Create new conversation' : language === 'fil' ? 'Lumikha ng bagong pag-uusap' : 'Paghimo og bag-ong panag-istoryahanay'}
           >
-            <Plus size={20} />
+            <Plus size={20} aria-hidden="true" />
             {getTranslation(language, 'newChat')}
           </button>
 
-          <SearchBar language={language} onSearch={handleSearch} />
+          <SearchBar 
+            language={language} 
+            onSearch={handleSearch} 
+            inputRef={searchInputRef}
+          />
           
           <button
             onClick={onToggleArchived}
@@ -170,11 +181,20 @@ export default function Sidebar({
         </div>
 
         <div className="p-4 border-t border-slate-800 space-y-2">
-          <button className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-slate-800 rounded-lg transition-colors duration-200 text-sm">
-            <Settings size={18} />
+          <button 
+            onClick={onSettingsClick}
+            className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-slate-800 rounded-lg transition-colors duration-200 text-sm"
+            aria-label={language === 'en' ? 'Open settings' : language === 'fil' ? 'Buksan ang settings' : 'Ablihi ang mga setting'}
+          >
+            <Settings size={18} aria-hidden="true" />
             {getTranslation(language, 'settings')}
           </button>
-          <button className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-slate-800 rounded-lg transition-colors duration-200 text-sm">
+          <button 
+            className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-slate-800 rounded-lg transition-colors duration-200 text-sm opacity-50 cursor-not-allowed"
+            disabled
+            aria-label={language === 'en' ? 'Profile (Coming soon)' : language === 'fil' ? 'Profile (Malapit na)' : 'Profile (Moabot na)'}
+            title={language === 'en' ? 'Coming soon' : language === 'fil' ? 'Malapit na' : 'Moabot na'}
+          >
             <User size={18} />
             {getTranslation(language, 'profile')}
           </button>
