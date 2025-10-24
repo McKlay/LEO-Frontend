@@ -139,6 +139,28 @@ Copy this checklist into your task tracker (GitHub Issues, Jira, etc.) or use it
 - [x] Update Settings Modal "About" section with new branding
 - [x] Remove translation for brand name (fixed English text)
 
+### Auto-Scroll Feature ✅ COMPLETE
+- [x] Create `useAutoScroll` custom hook
+- [x] Implement smart scroll detection (user position tracking)
+- [x] Auto-scroll when new messages are added
+- [x] Auto-scroll when typing indicator appears
+- [x] Instant scroll for new conversations
+- [x] Detect user manual scrolling (don't interrupt reading)
+- [x] Resume auto-scroll when user returns to bottom
+- [x] Support pagination (preserve scroll position for old messages)
+- [x] Configurable scroll behavior (smooth vs instant)
+- [x] Create `ScrollToBottomButton` component
+- [x] Add floating button with fade-in animation
+- [x] Multilingual support for scroll button (en, fil, ceb)
+- [x] Keyboard navigation for scroll button
+- [x] Screen reader accessibility (ARIA labels)
+- [x] Add fade-in animation to CSS
+- [x] Integration in App component
+- [x] Performance optimized (ref-based, no extra renders)
+- [x] Documentation: AUTO_SCROLL_IMPLEMENTATION.md
+- [x] Documentation: AUTO_SCROLL_SUMMARY.md
+- [x] Documentation: AUTO_SCROLL_QUICK_REFERENCE.md
+
 ### UI Polish
 - [ ] Smooth message entry animations
 - [ ] Better typing indicator

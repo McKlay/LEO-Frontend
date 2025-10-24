@@ -1,4 +1,4 @@
-import { createContext, useState, ReactNode, useRef, useEffect } from 'react';
+import { createContext, useState, ReactNode, useEffect } from 'react';
 import { Message, Conversation, Language, FeedbackData } from '../types/chat';
 import { chatApi } from '../services/api/chatApi';
 import { conversationApi } from '../services/api/conversationApi';
@@ -40,7 +40,6 @@ export const ChatProvider = ({ children, language }: ChatProviderProps) => {
   const [isTyping, setIsTyping] = useState(false);
   const [error, setError] = useState<AppError | null>(null);
   const [showArchived, setShowArchived] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const clearError = () => {
     setError(null);
@@ -62,11 +61,6 @@ export const ChatProvider = ({ children, language }: ChatProviderProps) => {
       setMessages(loadedMessages);
     }
   }, []);
-
-  // Auto-scroll to bottom when messages change
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
 
   // Save messages whenever they change
   useEffect(() => {

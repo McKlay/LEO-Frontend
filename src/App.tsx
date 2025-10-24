@@ -6,6 +6,7 @@ import ChatInput from './components/ChatInput';
 import SettingsModal from './components/Common/SettingsModal';
 import ProfileModal from './components/Common/ProfileModal';
 import LiveRegion from './components/Common/LiveRegion';
+import ScrollToBottomButton from './components/Common/ScrollToBottomButton';
 import { LanguageProvider } from './context/LanguageContext';
 import { ChatProvider } from './context/ChatContext';
 import { UIProvider } from './context/UIContext';
@@ -14,6 +15,7 @@ import { useLanguage } from './hooks/useLanguage';
 import { useChat } from './hooks/useChat';
 import { useUI } from './hooks/useUI';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
+import { useAutoScroll } from './hooks/useAutoScroll';
 import { Bot } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 
@@ -43,6 +45,20 @@ function ChatInterface() {
   const [screenReaderMessage, setScreenReaderMessage] = useState('');
   const searchInputRef = useRef<HTMLInputElement>(null);
   const mainContentRef = useRef<HTMLElement>(null);
+  
+  // Auto-scroll functionality
+  const {
+    scrollContainerRef,
+    scrollAnchorRef,
+    scrollToBottom,
+    handleScroll,
+    performAutoScroll,
+    isScrolledUp
+  } = useAutoScroll({
+    enabled: true,
+    behavior: 'smooth',
+    threshold: 100
+  });
 
   // Keyboard shortcuts
   useKeyboardShortcuts({
@@ -82,6 +98,22 @@ function ChatInterface() {
     }
   }, [isTyping, language, announceToScreenReader]);
 
+  // Auto-scroll when messages change or when typing indicator appears
+  useEffect(() => {
+    if (messages.length > 0 || isTyping) {
+      // Use smooth scroll for regular messages
+      performAutoScroll();
+    }
+  }, [messages, isTyping, performAutoScroll]);
+
+  // Instant scroll to bottom when starting a new conversation
+  useEffect(() => {
+    if (messages.length === 0 && currentConversationId === null) {
+      // Instant scroll for new conversations
+      scrollToBottom('instant');
+    }
+  }, [currentConversationId, messages.length, scrollToBottom]);
+
   return (
     <>
       {/* Skip to main content link for keyboard users */}
@@ -118,7 +150,12 @@ function ChatInterface() {
 
           <main 
             id="main-content" 
-            ref={mainContentRef}
+            ref={(el) => {
+              // Assign to both refs
+              if (mainContentRef) mainContentRef.current = el;
+              if (scrollContainerRef) (scrollContainerRef as React.MutableRefObject<HTMLElement | null>).current = el;
+            }}
+            onScroll={handleScroll}
             className="flex-1 overflow-y-auto" 
             role="main"
             aria-label={language === 'en' ? 'Chat conversation' : language === 'fil' ? 'Pag-uusap' : 'Panag-istoryahanay'}
@@ -152,6 +189,9 @@ function ChatInterface() {
                   </div>
                 </div>
               )}
+
+              {/* Scroll anchor for auto-scroll */}
+              <div ref={scrollAnchorRef} aria-hidden="true" />
             </div>
           )}
         </main>
@@ -161,6 +201,14 @@ function ChatInterface() {
           onSendMessage={sendMessage}
           disabled={isTyping}
         />
+
+        {/* Scroll to bottom button - shows when user scrolls up */}
+        {isScrolledUp && messages.length > 0 && (
+          <ScrollToBottomButton
+            language={language}
+            onClick={() => scrollToBottom('smooth')}
+          />
+        )}
       </div>
     </div>
 
