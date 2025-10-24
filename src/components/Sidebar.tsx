@@ -21,6 +21,7 @@ interface SidebarProps {
   onClose: () => void;
   searchInputRef?: React.RefObject<HTMLInputElement>;
   onSettingsClick: () => void;
+  onProfileClick: () => void;
 }
 
 export default function Sidebar({
@@ -38,7 +39,8 @@ export default function Sidebar({
   isOpen,
   onClose,
   searchInputRef,
-  onSettingsClick
+  onSettingsClick,
+  onProfileClick
 }: SidebarProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<Conversation[]>([]);
@@ -190,12 +192,11 @@ export default function Sidebar({
             {getTranslation(language, 'settings')}
           </button>
           <button 
-            className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-slate-800 rounded-lg transition-colors duration-200 text-sm opacity-50 cursor-not-allowed"
-            disabled
-            aria-label={language === 'en' ? 'Profile (Coming soon)' : language === 'fil' ? 'Profile (Malapit na)' : 'Profile (Moabot na)'}
-            title={language === 'en' ? 'Coming soon' : language === 'fil' ? 'Malapit na' : 'Moabot na'}
+            onClick={onProfileClick}
+            className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-slate-800 rounded-lg transition-colors duration-200 text-sm"
+            aria-label={language === 'en' ? 'Open profile' : language === 'fil' ? 'Buksan ang profile' : 'Ablihi ang profile'}
           >
-            <User size={18} />
+            <User size={18} aria-hidden="true" />
             {getTranslation(language, 'profile')}
           </button>
         </div>

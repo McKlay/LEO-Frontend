@@ -120,6 +120,25 @@ Copy this checklist into your task tracker (GitHub Issues, Jira, etc.) or use it
 - [x] Live regions for dynamic content
 - [ ] Test with screen readers (requires manual testing)
 
+### Profile & Account Management ✅ COMPLETE
+- [x] Profile modal with user information
+- [x] Login/Sign up functionality (UI ready, backend pending)
+- [x] Logout functionality (UI ready, backend pending)
+- [x] Privacy Policy section
+- [x] Terms of Service section
+- [x] FAQ section (4 common questions)
+- [x] Feedback submission form
+- [x] Delete account functionality (UI ready, backend pending)
+- [x] Multi-section navigation within profile
+- [x] Multilingual support for all profile content
+
+### Branding Updates ✅ COMPLETE
+- [x] Rebrand to "LEO - Legal Employment Officer"
+- [x] Update Header component with new branding
+- [x] Update WelcomeScreen with new branding
+- [x] Update Settings Modal "About" section with new branding
+- [x] Remove translation for brand name (fixed English text)
+
 ### UI Polish
 - [ ] Smooth message entry animations
 - [ ] Better typing indicator

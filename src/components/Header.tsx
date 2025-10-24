@@ -1,7 +1,6 @@
 import { Menu, Scale, Globe, ChevronDown } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { Language } from '../types/chat';
-import { getTranslation } from '../utils/i18n';
 import { SUPPORTED_LANGUAGES } from '../types/language';
 
 interface HeaderProps {
@@ -56,10 +55,10 @@ export default function Header({ language, onLanguageChange, onMenuToggle }: Hea
             </div>
             <div>
               <h1 className="text-lg font-bold text-slate-800">
-                {getTranslation(language, 'appTitle')}
+                LEO
               </h1>
               <p className="text-xs text-slate-500 hidden sm:block">
-                {getTranslation(language, 'appSubtitle')}
+                Legal Employment Officer
               </p>
             </div>
           </div>

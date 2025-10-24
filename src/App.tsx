@@ -4,6 +4,7 @@ import WelcomeScreen from './components/WelcomeScreen';
 import ChatMessage from './components/ChatMessage';
 import ChatInput from './components/ChatInput';
 import SettingsModal from './components/Common/SettingsModal';
+import ProfileModal from './components/Common/ProfileModal';
 import LiveRegion from './components/Common/LiveRegion';
 import { LanguageProvider } from './context/LanguageContext';
 import { ChatProvider } from './context/ChatContext';
@@ -38,6 +39,7 @@ function ChatInterface() {
   const { isSidebarOpen, toggleSidebar, closeSidebar } = useUI();
   const { announceToScreenReader } = useAccessibility();
   const [showSettings, setShowSettings] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
   const [screenReaderMessage, setScreenReaderMessage] = useState('');
   const searchInputRef = useRef<HTMLInputElement>(null);
   const mainContentRef = useRef<HTMLElement>(null);
@@ -104,6 +106,7 @@ function ChatInterface() {
           onClose={closeSidebar}
           searchInputRef={searchInputRef}
           onSettingsClick={() => setShowSettings(true)}
+          onProfileClick={() => setShowProfile(true)}
         />
 
         <div className="flex-1 flex flex-col overflow-hidden">
@@ -166,6 +169,14 @@ function ChatInterface() {
       <SettingsModal
         language={language}
         onClose={() => setShowSettings(false)}
+      />
+    )}
+
+    {/* Profile Modal */}
+    {showProfile && (
+      <ProfileModal
+        language={language}
+        onClose={() => setShowProfile(false)}
       />
     )}
 

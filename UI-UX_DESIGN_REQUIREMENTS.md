@@ -395,7 +395,7 @@ Current bot responses include:
 **✓ Currently Implemented:**
 - Welcoming header in user's language ("Legal Assistant")
 - Brief explanation of chatbot's purpose ("AI-Powered Labor Law Guidance")
-- Language selection button (top right - Filipino/English toggle)
+- Language selection button (top right - English/Filipino/Bisaya toggle)
 - Sample questions displayed as interactive buttons
 - Left sidebar with "New Conversation" button and conversation history tracking
 - Clean, centered layout with scale/justice icon

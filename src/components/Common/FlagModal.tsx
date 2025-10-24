@@ -1,5 +1,5 @@
 import { X, AlertTriangle } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Language } from '../../types/chat';
 import { getTranslation } from '../../utils/i18n';
 
@@ -13,6 +13,22 @@ interface FlagModalProps {
 export default function FlagModal({ isOpen, onClose, onSubmit, language }: FlagModalProps) {
   const [selectedReason, setSelectedReason] = useState<string>('');
   const [additionalDetails, setAdditionalDetails] = useState<string>('');
+
+  // Close on escape key
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        handleClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 

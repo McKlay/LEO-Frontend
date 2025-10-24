@@ -1,5 +1,5 @@
 import { X, User, Globe2, Eye, Zap, Keyboard, Type } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Language } from '../../types/chat';
 import { useAccessibility, FontSize } from '../../context/AccessibilityContext';
 
@@ -13,6 +13,23 @@ type SettingsTab = 'accessibility' | 'preferences' | 'about';
 export default function SettingsModal({ language, onClose }: SettingsModalProps) {
   const [activeTab, setActiveTab] = useState<SettingsTab>('accessibility');
   const { settings, setFontSize, toggleHighContrast, toggleReducedMotion, toggleKeyboardShortcuts } = useAccessibility();
+
+  // Close on escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'unset';
+    };
+  }, [onClose]);
 
   const tabs = [
     { 
@@ -272,10 +289,10 @@ export default function SettingsModal({ language, onClose }: SettingsModalProps)
                   </svg>
                 </div>
                 <h3 className="text-2xl font-bold text-slate-800 mb-2">
-                  {language === 'en' ? 'Legal Assistant' : language === 'fil' ? 'Legal Assistant' : 'Legal Assistant'}
+                  LEO
                 </h3>
                 <p className="text-slate-600 mb-6">
-                  {language === 'en' ? 'AI-Powered Labor Law Guidance' : language === 'fil' ? 'AI-Powered Labor Law Guidance' : 'AI-Powered Labor Law Guidance'}
+                  Legal Employment Officer
                 </p>
               </div>
 

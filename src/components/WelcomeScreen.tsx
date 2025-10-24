@@ -19,10 +19,10 @@ export default function WelcomeScreen({ language, onSelectQuestion }: WelcomeScr
 
         <div>
           <h1 className="text-4xl font-bold text-slate-800 mb-3">
-            {getTranslation(language, 'appTitle')}
+            LEO
           </h1>
           <p className="text-lg text-slate-600">
-            {getTranslation(language, 'appSubtitle')}
+            Legal Employment Officer
           </p>
         </div>
 
