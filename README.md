@@ -4,7 +4,7 @@ AI-powered legal guidance application for Philippine labor law, built with React
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 - [Features](#features)
 - [Project Structure](#project-structure)
 - [Technology Stack](#technology-stack)
@@ -22,7 +22,7 @@ AI-powered legal guidance application for Philippine labor law, built with React
 
 ---
 
-## ✨ Features
+## Features
 
 ### Core Functionality
 - **Multilingual Chatbot:** Filipino (Tagalog), English, Cebuano with code-switching support (Taglish, Bisaya-English mix)
@@ -48,7 +48,7 @@ AI-powered legal guidance application for Philippine labor law, built with React
 
 ---
 
-## 🏗️ Project Structure
+## Project Structure
 
 ```
 src/
@@ -109,7 +109,7 @@ src/
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 ### Core Technologies
 - **React 18+** (Functional components with Hooks only)
@@ -131,7 +131,7 @@ src/
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - **Node.js** (v18+ recommended)
@@ -171,7 +171,7 @@ npm run type-check
 
 ---
 
-## 🏛️ Architecture
+## Architecture
 
 ### Design Principles
 - **Single Responsibility:** Each component/hook/service has one primary purpose
@@ -195,7 +195,7 @@ npm run type-check
 
 ---
 
-## 🌐 Multilingual Support
+## Multilingual Support
 
 ### Supported Languages
 1. **Filipino (Tagalog)** - Primary accessibility language
@@ -219,7 +219,7 @@ Built to easily add more Philippine languages (Ilonggo, Kapampangan, etc.) with 
 
 ---
 
-## ♿ Accessibility & UX
+## Accessibility & UX
 
 ### Accessibility Standards
 - **WCAG AAA Compliance:** 7:1 contrast ratios, keyboard navigation, screen reader support
@@ -241,7 +241,7 @@ Built to easily add more Philippine languages (Ilonggo, Kapampangan, etc.) with 
 
 ---
 
-## 📊 Performance Targets
+## Performance Targets
 
 | Metric | Target | Current Status |
 |--------|--------|----------------|
@@ -255,7 +255,7 @@ Built to easily add more Philippine languages (Ilonggo, Kapampangan, etc.) with 
 
 ---
 
-## 🧪 Testing
+## Testing
 
 ### Testing Strategy
 - **Unit Tests:** Component and hook testing with React Testing Library
@@ -284,7 +284,7 @@ npm run audit:a11y
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 ### Development Workflow
 1. **Fork** the repository
@@ -320,7 +320,7 @@ npm run audit:a11y
 
 ---
 
-## 📄 Documentation
+## Documentation
 
 Detailed documentation is available in the `docs/` directory:
 
@@ -333,7 +333,7 @@ Detailed documentation is available in the `docs/` directory:
 
 ---
 
-## 📦 Deployment
+## Deployment
 
 ### Environment Variables
 Create a `.env` file with:
@@ -359,13 +359,13 @@ npm run preview
 
 ---
 
-## 📄 License
+## License
 
 MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
-## 📞 Contact
+## Contact
 
 - **DOLE Hotline:** 1349
 - **Project Issues:** [GitHub Issues](https://github.com/McKlay/LEO-Frontend/issues)
@@ -378,7 +378,7 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
-## ⚠️ Disclaimer
+## Disclaimer
 
 **This chatbot provides AI-generated information based on Philippine labor law, not legal advice.** Always consult a qualified lawyer or the Department of Labor and Employment (DOLE) for complex cases. The information is for educational purposes only and may not cover all circumstances.
 
