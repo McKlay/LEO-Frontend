@@ -76,8 +76,8 @@ export default function Sidebar({
       )}
 
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-50 w-72 bg-slate-900 text-slate-100 flex flex-col transition-transform duration-300 ease-in-out ${
-          isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        className={`fixed inset-y-0 left-0 z-50 w-72 bg-slate-900 text-slate-100 flex flex-col transition-transform duration-300 ease-in-out ${
+          isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
         role="complementary"
         aria-label={language === 'en' ? 'Conversation sidebar' : language === 'fil' ? 'Sidebar ng pag-uusap' : 'Sidebar sa panag-istoryahanay'}

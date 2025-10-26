@@ -1,7 +1,8 @@
-import { Menu, Scale, Globe, ChevronDown } from 'lucide-react';
+import { Menu, Scale, Globe, ChevronDown, ChevronLeft } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { Language } from '../types/chat';
 import { SUPPORTED_LANGUAGES } from '../types/language';
+import { useUI } from '../hooks/useUI';
 
 interface HeaderProps {
   language: Language;
@@ -12,6 +13,7 @@ interface HeaderProps {
 export default function Header({ language, onLanguageChange, onMenuToggle }: HeaderProps) {
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const { isSidebarOpen } = useUI();
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -43,11 +45,29 @@ export default function Header({ language, onLanguageChange, onMenuToggle }: Hea
         <div className="flex items-center gap-3">
           <button
             onClick={onMenuToggle}
-            className="lg:hidden p-2 hover:bg-slate-100 rounded-lg transition-colors"
-            aria-label="Toggle menu"
+            className="lg:hidden p-2 hover:bg-slate-100 rounded-lg transition-colors duration-200 group"
+            aria-label={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
+            aria-expanded={isSidebarOpen}
           >
-            <Menu size={24} className="text-slate-700" />
+            <Menu size={24} className="text-slate-700 group-hover:text-slate-900" />
           </button>
+
+          <div className="hidden lg:flex items-center gap-2">
+            <button
+              onClick={onMenuToggle}
+              className="p-2 hover:bg-slate-100 rounded-lg transition-colors duration-200 group"
+              aria-label={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+              aria-expanded={isSidebarOpen}
+              title={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+            >
+              <ChevronLeft 
+                size={20} 
+                className={`text-slate-600 group-hover:text-slate-900 transition-transform duration-300 ${
+                  isSidebarOpen ? 'rotate-0' : 'rotate-180'
+                }`}
+              />
+            </button>
+          </div>
 
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-sky-500 to-sky-600 flex items-center justify-center shadow-md">

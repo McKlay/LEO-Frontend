@@ -44,7 +44,6 @@ function ChatInterface() {
   const [showProfile, setShowProfile] = useState(false);
   const [screenReaderMessage, setScreenReaderMessage] = useState('');
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const mainContentRef = useRef<HTMLElement>(null);
   
   // Auto-scroll functionality
   const {
@@ -141,7 +140,11 @@ function ChatInterface() {
           onProfileClick={() => setShowProfile(true)}
         />
 
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div 
+          className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ease-in-out ${
+            isSidebarOpen ? 'ml-72' : 'ml-0'
+          }`}
+        >
           <Header
             language={language}
             onLanguageChange={setLanguage}
@@ -152,8 +155,8 @@ function ChatInterface() {
             id="main-content" 
             ref={(el) => {
               // Assign to both refs
-              if (mainContentRef) mainContentRef.current = el;
-              if (scrollContainerRef) (scrollContainerRef as React.MutableRefObject<HTMLElement | null>).current = el;
+              const scrollRef = scrollContainerRef as React.MutableRefObject<HTMLElement | null>;
+              if (scrollRef) scrollRef.current = el;
             }}
             onScroll={handleScroll}
             className="flex-1 overflow-y-auto" 

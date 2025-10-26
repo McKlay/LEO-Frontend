@@ -1,4 +1,4 @@
-import { createContext, useState, ReactNode } from 'react';
+import { createContext, useState, ReactNode, useEffect } from 'react';
 
 interface UIContextType {
   isSidebarOpen: boolean;
@@ -14,7 +14,26 @@ interface UIProviderProps {
 }
 
 export const UIProvider = ({ children }: UIProviderProps) => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  // Initialize sidebar state based on screen size
+  const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+    // Check if we're on desktop (lg breakpoint is 1024px)
+    return typeof window !== 'undefined' && window.innerWidth >= 1024;
+  });
+
+  // Update sidebar state when screen size changes
+  useEffect(() => {
+    const handleResize = () => {
+      // Auto-open on desktop, auto-close on mobile
+      if (window.innerWidth >= 1024) {
+        setIsSidebarOpen(true);
+      } else {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
   const closeSidebar = () => setIsSidebarOpen(false);
