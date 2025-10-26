@@ -292,7 +292,7 @@ export default function SettingsModal({ language, onClose }: SettingsModalProps)
                   LEO
                 </h3>
                 <p className="text-slate-600 mb-6">
-                  Legal Employment Officer
+                  Labor Education Online
                 </p>
               </div>
 

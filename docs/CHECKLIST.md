@@ -133,7 +133,7 @@ Copy this checklist into your task tracker (GitHub Issues, Jira, etc.) or use it
 - [x] Multilingual support for all profile content
 
 ### Branding Updates ✅ COMPLETE
-- [x] Rebrand to "LEO - Legal Employment Officer"
+- [x] Rebrand to "LEO - Labor Education Online"
 - [x] Update Header component with new branding
 - [x] Update WelcomeScreen with new branding
 - [x] Update Settings Modal "About" section with new branding

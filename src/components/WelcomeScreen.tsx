@@ -22,7 +22,7 @@ export default function WelcomeScreen({ language, onSelectQuestion }: WelcomeScr
             LEO
           </h1>
           <p className="text-lg text-slate-600">
-            Legal Employment Officer
+            Labor Education Online
           </p>
         </div>
 

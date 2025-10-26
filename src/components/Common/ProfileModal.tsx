@@ -298,10 +298,10 @@ export default function ProfileModal({
             <div className="space-y-4 text-sm text-slate-700 leading-relaxed">
               <p>
                 {language === 'en'
-                  ? 'Your privacy is important to us. This privacy policy explains how LEO (Legal Employment Officer) collects, uses, and protects your information.'
+                  ? 'Your privacy is important to us. This privacy policy explains how LEO (Labor Education Online) collects, uses, and protects your information.'
                   : language === 'fil'
-                  ? 'Mahalaga sa amin ang iyong privacy. Ipinaliwanag ng patakaran sa privacy na ito kung paano kinokolekta, ginagamit, at pinoprotektahan ng LEO (Legal Employment Officer) ang iyong impormasyon.'
-                  : 'Importante kanamo ang imong privacy. Gipatin-aw niining palisiya sa privacy kon giunsa pagkolekta, paggamit, ug pagpanalipod sa LEO (Legal Employment Officer) ang imong impormasyon.'}
+                  ? 'Mahalaga sa amin ang iyong privacy. Ipinaliwanag ng patakaran sa privacy na ito kung paano kinokolekta, ginagamit, at pinoprotektahan ng LEO (Labor Education Online) ang iyong impormasyon.'
+                  : 'Importante kanamo ang imong privacy. Gipatin-aw niining palisiya sa privacy kon giunsa pagkolekta, paggamit, ug pagpanalipod sa LEO (Labor Education Online) ang imong impormasyon.'}
               </p>
 
               <div>

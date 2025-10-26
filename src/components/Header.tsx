@@ -78,7 +78,7 @@ export default function Header({ language, onLanguageChange, onMenuToggle }: Hea
                 LEO
               </h1>
               <p className="text-xs text-slate-500 hidden sm:block">
-                Legal Employment Officer
+                Labor Education Online
               </p>
             </div>
           </div>
