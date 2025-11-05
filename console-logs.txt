@@ -1,0 +1,20 @@
+chatApi.ts:178 Chat API error: TimeoutError: signal timed out
+sendMessage	@	chatApi.ts:178
+await in sendMessage		
+sendMessage	@	ChatContext.tsx:98
+handleSubmit	@	ChatInput.tsx:26
+handleKeyDown	@	ChatInput.tsx:34
+errorHandler.ts:129 [API_ERROR] sendMessage: signal timed out
+logError	@	errorHandler.ts:129
+sendMessage	@	ChatContext.tsx:146
+await in sendMessage		
+handleSubmit	@	ChatInput.tsx:26
+handleKeyDown	@	ChatInput.tsx:34
+errorHandler.ts:131 Original error: TimeoutError: signal timed out
+logError	@	errorHandler.ts:131
+sendMessage	@	ChatContext.tsx:146
+await in sendMessage		
+handleSubmit	@	ChatInput.tsx:26
+handleKeyDown	@	ChatInput.tsx:34
+
+(index):1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received

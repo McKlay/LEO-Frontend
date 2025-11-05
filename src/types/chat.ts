@@ -6,6 +6,7 @@ export interface Message {
   citations?: Citation[];
   suggestions?: string[];
   feedback?: MessageFeedback;
+  isNew?: boolean; // Flag to indicate if this message should trigger typing animation
 }
 
 export interface Citation {

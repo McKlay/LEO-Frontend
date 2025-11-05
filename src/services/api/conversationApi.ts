@@ -97,7 +97,12 @@ export const conversationApi = {
   saveConversation: (conversationId: string, messages: Message[]): void => {
     try {
       const key = `${MESSAGES_KEY_PREFIX}${conversationId}`;
-      localStorage.setItem(key, JSON.stringify(messages));
+      // Strip isNew flag before saving to keep storage clean
+      const messagesToSave = messages.map(msg => {
+        const { isNew, ...messageWithoutIsNew } = msg;
+        return messageWithoutIsNew;
+      });
+      localStorage.setItem(key, JSON.stringify(messagesToSave));
     } catch (error) {
       console.error('Error saving conversation:', error);
     }

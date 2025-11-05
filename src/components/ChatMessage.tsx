@@ -2,6 +2,7 @@ import { User, Bot, ChevronDown, ChevronUp, ExternalLink, BookOpen, Flag } from 
 import { Message, Language } from '../types/chat';
 import { getTranslation } from '../utils/i18n';
 import { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 import ContactModal from './Common/ContactModal';
 import FormModal from './Common/FormModal';
 import FeedbackRating from './Common/FeedbackRating';
@@ -9,6 +10,7 @@ import FlagModal from './Common/FlagModal';
 import { COMMON_ACTIONS } from '../types/actions';
 import type { ContactActionData, FormActionData } from '../types/actions';
 import { getRelatedResources, getCitationShortRef, isValidUrl } from '../services/utils/citationUtils';
+import { useTypingEffect } from '../hooks/useTypingEffect';
 
 interface ChatMessageProps {
   message: Message;
@@ -26,6 +28,19 @@ export default function ChatMessage({ message, language, conversationId, onRateM
   const [activeContactData, setActiveContactData] = useState<ContactActionData | null>(null);
   const [activeFormData, setActiveFormData] = useState<FormActionData | null>(null);
   const isUser = message.role === 'user';
+
+  // Use the isNew flag from the message to determine if we should animate
+  const shouldAnimate = !isUser && message.isNew === true;
+  
+  // Show actions immediately for user messages and old messages
+  const [showActions, setShowActions] = useState(!shouldAnimate);
+  
+  const { displayedText, isTyping } = useTypingEffect({
+    text: message.content,
+    speed: 3, // 3 characters per frame for smooth typing
+    enabled: shouldAnimate,
+    onComplete: () => setShowActions(true)
+  });
 
   const handleActionClick = (suggestion: string) => {
     // Map suggestion text to common actions
@@ -58,12 +73,62 @@ export default function ChatMessage({ message, language, conversationId, onRateM
               : 'bg-white border border-slate-200'
           }`}
         >
-          <p className={`text-sm leading-relaxed whitespace-pre-wrap ${isUser ? 'text-white' : 'text-slate-800'}`}>
-            {message.content}
+          {isUser ? (
+            <p className="text-sm leading-relaxed whitespace-pre-wrap text-white">
+              {message.content}
+            </p>
+          ) : (
+            <div className="text-sm leading-relaxed text-slate-800 prose prose-sm max-w-none">
+              <ReactMarkdown
+                components={{
+                  // Style headings
+                  h1: ({node, ...props}) => <h1 className="text-lg font-bold mt-2 mb-1" {...props} />,
+                  h2: ({node, ...props}) => <h2 className="text-base font-bold mt-2 mb-1" {...props} />,
+                  h3: ({node, ...props}) => <h3 className="text-sm font-semibold mt-2 mb-1" {...props} />,
+                  // Style paragraphs
+                  p: ({node, ...props}) => <p className="mb-2 last:mb-0" {...props} />,
+                  // Style strong/bold text
+                  strong: ({node, ...props}) => <strong className="font-bold text-slate-900" {...props} />,
+                  // Style emphasis/italic text
+                  em: ({node, ...props}) => <em className="italic" {...props} />,
+                  // Style lists
+                  ul: ({node, ...props}) => <ul className="list-disc pl-5 mb-2 space-y-1" {...props} />,
+                  ol: ({node, ...props}) => <ol className="list-decimal pl-5 mb-2 space-y-1" {...props} />,
+                  li: ({node, ...props}) => <li className="mb-1" {...props} />,
+                  // Style links
+                  a: ({node, ...props}) => <a className="text-sky-600 hover:text-sky-700 underline" target="_blank" rel="noopener noreferrer" {...props} />,
+                  // Style code
+                  code: ({node, className, children, ...props}: any) => {
+                    const isInline = !className?.includes('language-');
+                    return isInline ? 
+                      <code className="bg-slate-100 text-slate-800 px-1 py-0.5 rounded text-xs font-mono" {...props}>{children}</code> :
+                      <code className="block bg-slate-100 text-slate-800 p-2 rounded text-xs font-mono overflow-x-auto" {...props}>{children}</code>;
+                  },
+                  // Style blockquotes
+                  blockquote: ({node, ...props}) => <blockquote className="border-l-4 border-slate-300 pl-4 italic text-slate-600 my-2" {...props} />,
+                  // Style horizontal rules
+                  hr: ({node, ...props}) => <hr className="my-3 border-slate-200" {...props} />,
+                }}
+              >
+                {displayedText}
+              </ReactMarkdown>
+              {/* Typing cursor for bot messages - only show when there's text being typed */}
+              {isTyping && displayedText.length > 0 && (
+                <span className="inline-block w-1 h-4 ml-1 bg-sky-600 animate-pulse align-middle" />
+              )}
+            </div>
+          )}
+
+          <p className={`text-xs mt-2 opacity-60 ${isUser ? 'text-white' : 'text-slate-700'}`}>
+            {new Date(message.timestamp).toLocaleTimeString(language === 'en' ? 'en-US' : 'fil-PH', {
+              hour: '2-digit',
+              minute: '2-digit'
+            })}
           </p>
 
-          {message.citations && message.citations.length > 0 && (
-            <div className="mt-4 pt-4 border-t border-slate-200">
+          {/* Citations - only show after typing completes */}
+          {message.citations && message.citations.length > 0 && showActions && (
+            <div className="mt-4 pt-4 border-t border-slate-200 animate-fadeIn">
               <button
                 onClick={() => setShowCitations(!showCitations)}
                 className="flex items-center gap-2 text-xs font-medium text-slate-600 hover:text-slate-800 transition-colors"
@@ -135,8 +200,9 @@ export default function ChatMessage({ message, language, conversationId, onRateM
             </div>
           )}
 
-          {message.suggestions && message.suggestions.length > 0 && (
-            <div className="mt-4 pt-4 border-t border-slate-200">
+          {/* Suggested Actions - only show after typing completes */}
+          {message.suggestions && message.suggestions.length > 0 && showActions && (
+            <div className="mt-4 pt-4 border-t border-slate-200 animate-fadeIn">
               <p className="text-xs font-medium text-slate-600 mb-2">
                 {getTranslation(language, 'suggestedActions')}
               </p>
@@ -153,13 +219,6 @@ export default function ChatMessage({ message, language, conversationId, onRateM
               </div>
             </div>
           )}
-
-          <p className="text-xs mt-2 opacity-60">
-            {new Date(message.timestamp).toLocaleTimeString(language === 'en' ? 'en-US' : 'fil-PH', {
-              hour: '2-digit',
-              minute: '2-digit'
-            })}
-          </p>
 
           {/* Feedback Section - Only for bot messages */}
           {!isUser && (

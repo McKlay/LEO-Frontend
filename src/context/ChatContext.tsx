@@ -82,8 +82,25 @@ export const ChatProvider = ({ children, language }: ChatProviderProps) => {
     setIsTyping(true);
 
     try {
-      // Call API to get assistant response (currently mocked)
-      const response = await chatApi.sendMessage(content, language);
+      // Determine conversation ID (create new if needed)
+      let convId = currentConversationId;
+      if (!convId) {
+        convId = `conv_${Date.now()}`;
+      }
+
+      // Prepare previous messages for multi-turn context (excluding the current user message)
+      const previousMessages = messages.map((msg) => ({
+        role: msg.role,
+        content: msg.content
+      }));
+
+      // Call API to get assistant response with multi-turn support
+      const response = await chatApi.sendMessage(
+        content,
+        language,
+        convId,
+        previousMessages
+      );
 
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -91,7 +108,8 @@ export const ChatProvider = ({ children, language }: ChatProviderProps) => {
         content: response.content,
         timestamp: new Date(),
         citations: response.citations,
-        suggestions: response.suggestions
+        suggestions: response.suggestions as string[],
+        isNew: true // Mark as new for typing animation
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
@@ -99,7 +117,7 @@ export const ChatProvider = ({ children, language }: ChatProviderProps) => {
       // Create or update conversation
       if (!currentConversationId) {
         const newConv: Conversation = {
-          id: Date.now().toString(),
+          id: convId,
           title: conversationApi.generateTitle(content, language),
           lastMessage: response.content.slice(0, 100),
           timestamp: new Date(),
@@ -138,6 +156,8 @@ export const ChatProvider = ({ children, language }: ChatProviderProps) => {
   const createNewConversation = () => {
     setMessages([]);
     setCurrentConversationId(null);
+    // Clear current conversation from localStorage
+    conversationApi.setCurrentConversationId(null);
   };
 
   const selectConversation = (id: string) => {
