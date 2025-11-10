@@ -114,7 +114,7 @@ export default function Sidebar({
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4">
+        <div className="flex-1 overflow-y-auto p-4 sidebar-scroll">
           <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">
             {getTranslation(language, 'conversations')}
           </h2>
