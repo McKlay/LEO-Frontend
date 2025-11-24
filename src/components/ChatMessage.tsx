@@ -161,7 +161,21 @@ export default function ChatMessage({ message, language, conversationId, onRateM
                           <p className="text-slate-600 font-medium mb-1.5">{citation.article}</p>
                         )}
                         
-                        <p className="text-slate-600 italic leading-relaxed">{citation.text}</p>
+                        <div className="text-slate-600 italic leading-relaxed prose prose-sm max-w-none">
+                          <ReactMarkdown
+                            components={{
+                              p: ({node, ...props}) => <p className="mb-1 last:mb-0" {...props} />,
+                              strong: ({node, ...props}) => <strong className="font-bold text-slate-700 not-italic" {...props} />,
+                              em: ({node, ...props}) => <em className="italic" {...props} />,
+                              a: ({node, ...props}) => <a className="text-sky-600 hover:text-sky-700 underline not-italic" target="_blank" rel="noopener noreferrer" {...props} />,
+                              code: ({node, className, children, ...props}: any) => {
+                                return <code className="bg-slate-200 text-slate-800 px-1 py-0.5 rounded text-xs font-mono not-italic" {...props}>{children}</code>;
+                              },
+                            }}
+                          >
+                            {citation.text}
+                          </ReactMarkdown>
+                        </div>
                         
                         <div className="flex flex-wrap gap-2 mt-3">
                           {citation.url && isValidUrl(citation.url) && (

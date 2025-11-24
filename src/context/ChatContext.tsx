@@ -10,6 +10,7 @@ interface ChatContextType {
   conversations: Conversation[];
   currentConversationId: string | null;
   isTyping: boolean;
+  processingStatus: string | null; // Added for streaming status updates
   error: AppError | null;
   showArchived: boolean;
   sendMessage: (content: string) => Promise<void>;
@@ -38,6 +39,7 @@ export const ChatProvider = ({ children, language }: ChatProviderProps) => {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [isTyping, setIsTyping] = useState(false);
+  const [processingStatus, setProcessingStatus] = useState<string | null>(null);
   const [error, setError] = useState<AppError | null>(null);
   const [showArchived, setShowArchived] = useState(false);
 
@@ -80,6 +82,7 @@ export const ChatProvider = ({ children, language }: ChatProviderProps) => {
 
     setMessages((prev) => [...prev, userMessage]);
     setIsTyping(true);
+    setProcessingStatus('Analyzing your question...');
 
     try {
       // Determine conversation ID (create new if needed)
@@ -94,12 +97,18 @@ export const ChatProvider = ({ children, language }: ChatProviderProps) => {
         content: msg.content
       }));
 
-      // Call API to get assistant response with multi-turn support
+      // Status callback for streaming updates
+      const handleStatusUpdate = (status: string) => {
+        setProcessingStatus(status);
+      };
+
+      // Call API to get assistant response with streaming support
       const response = await chatApi.sendMessage(
         content,
         language,
         convId,
-        previousMessages
+        previousMessages,
+        handleStatusUpdate
       );
 
       const assistantMessage: Message = {
@@ -150,6 +159,7 @@ export const ChatProvider = ({ children, language }: ChatProviderProps) => {
       setMessages((prev) => prev.filter(msg => msg.id !== userMessage.id));
     } finally {
       setIsTyping(false);
+      setProcessingStatus(null);
     }
   };
 
@@ -341,6 +351,7 @@ export const ChatProvider = ({ children, language }: ChatProviderProps) => {
         conversations,
         currentConversationId,
         isTyping,
+        processingStatus,
         error,
         showArchived,
         sendMessage,

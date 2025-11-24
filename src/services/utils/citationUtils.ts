@@ -62,11 +62,11 @@ export const getRelatedResources = (citation: Citation): RelatedResource[] => {
   const sourceLower = citation.source.toLowerCase();
 
   // Labor Code resources
-  if (sourceLower.includes('labor code')) {
+  if (sourceLower.includes('labor code') || sourceLower.includes('pd 442') || sourceLower.includes('presidential decree no. 442')) {
     resources.push({
       title: 'Full Labor Code of the Philippines',
-      url: 'https://www.dole.gov.ph/labor-code-of-the-philippines/',
-      description: 'Complete text of the Labor Code'
+      url: 'https://lawphil.net/statutes/presdecs/pd1974/pd_442_1974.html',
+      description: 'Complete text of Presidential Decree No. 442'
     });
     resources.push({
       title: 'DOLE Department Orders',
@@ -105,7 +105,7 @@ export const getRelatedResources = (citation: Citation): RelatedResource[] => {
   // IRR
   if (sourceLower.includes('implementing rules') || sourceLower.includes('irr')) {
     resources.push({
-      title: 'DOLE IRR Repository',
+      title: 'DOLE Omnibus Rules',
       url: 'https://www.dole.gov.ph/omnibus-rules/',
       description: 'Omnibus Rules Implementing the Labor Code'
     });

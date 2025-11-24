@@ -25,7 +25,8 @@ function ChatInterface() {
     messages, 
     conversations, 
     currentConversationId, 
-    isTyping, 
+    isTyping,
+    processingStatus,
     showArchived,
     sendMessage, 
     createNewConversation, 
@@ -184,11 +185,15 @@ function ChatInterface() {
                     <Bot size={20} className="text-white" />
                   </div>
                   <div className="bg-white border border-slate-200 rounded-2xl px-5 py-3.5 shadow-sm">
-                    <div className="flex gap-1.5">
-                      <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                      <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                      <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                    </div>
+                    {processingStatus ? (
+                      <p className="text-sm text-slate-600">{processingStatus}</p>
+                    ) : (
+                      <div className="flex gap-1.5">
+                        <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                        <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                        <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}

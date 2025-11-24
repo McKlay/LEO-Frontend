@@ -1,5 +1,5 @@
 import { Language } from '../../types/chat';
-import { ChatResponse, ChatMessageRequest, ChatMessageResponse } from '../../types/api';
+import { ChatResponse, ChatMessageRequest } from '../../types/api';
 
 /**
  * Configuration for API calls
@@ -97,23 +97,30 @@ const HARDCODED_SUGGESTIONS = [
 ];
 
 /**
+ * Status event callback for streaming
+ */
+export type StatusCallback = (status: string) => void;
+
+/**
  * Chat API service - handles communication with backend
  * Implements BACKEND_API_SPECIFICATIONS.md v1.0.0
  */
 export const chatApi = {
   /**
-   * Send a message and get AI response
+   * Send a message and get AI response with streaming support
    * Supports multi-turn conversation by passing previous messages in context
    * @param content - User's message
    * @param language - Current language setting
    * @param conversationId - Current conversation ID
    * @param previousMessages - Array of previous messages for context
+   * @param onStatusUpdate - Optional callback for status updates during streaming
    */
   sendMessage: async (
     content: string,
     language: Language,
     conversationId: string,
-    previousMessages: Array<{ role: string; content: string }> = []
+    previousMessages: Array<{ role: string; content: string }> = [],
+    onStatusUpdate?: StatusCallback
   ): Promise<ChatResponse> => {
     try {
       // Get valid session token
@@ -133,8 +140,8 @@ export const chatApi = {
         }
       };
 
-      // Make API request to backend
-      const response = await fetch(`${API_BASE_URL}/chat/message`, {
+      // Use streaming endpoint for better UX
+      const response = await fetch(`${API_BASE_URL}/chat/message/stream`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -152,11 +159,75 @@ export const chatApi = {
         );
       }
 
-      const backendResponse: ChatMessageResponse = await response.json();
+      // Process SSE stream
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      
+      let contentChunks: string[] = [];
+      let citations: any[] = [];
+      let currentEventType: string | null = null;
+      
+      if (!reader) {
+        throw new Error('Response body is not readable');
+      }
 
-      // Transform backend response to frontend format
-      // Map backend citations to frontend Citation format
-      const citations = backendResponse.citations.map(cite => ({
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split('\n');
+
+        for (const line of lines) {
+          if (!line.trim()) continue;
+
+          // Parse SSE format: "event: <type>" or "data: <json>"
+          if (line.startsWith('event: ')) {
+            currentEventType = line.substring(7).trim();
+          } else if (line.startsWith('data: ')) {
+            const data = line.substring(6).trim();
+            
+            if (data === '[DONE]') continue;
+
+            try {
+              const eventData = JSON.parse(data);
+
+              // Handle different event types
+              if (currentEventType === 'status' && onStatusUpdate) {
+                // Status event: data = {"step": "analyze", "message": "Analyzing..."}
+                onStatusUpdate(eventData.message || eventData.step);
+              } else if (currentEventType === 'content_chunk') {
+                // Content chunk event: data = {"chunk": "text"}
+                contentChunks.push(eventData.chunk);
+              } else if (currentEventType === 'citations') {
+                // Citations event: data = {"citations": [...]}
+                citations = eventData.citations || eventData;
+              } else if (currentEventType === 'complete') {
+                // Complete event: data = {content, citations, suggestions, metadata}
+                // This happens for clarification responses (no streaming chunks)
+                if (eventData.content && !contentChunks.length) {
+                  contentChunks.push(eventData.content);
+                }
+                if (eventData.citations && !citations.length) {
+                  citations = eventData.citations;
+                }
+              }
+              // Ignore 'metadata' event (handled in 'complete')
+              
+              // Reset event type after processing
+              currentEventType = null;
+            } catch (e) {
+              console.warn('Failed to parse SSE event:', data, e);
+            }
+          }
+        }
+      }
+
+      // Combine content chunks
+      const fullContent = contentChunks.join('');
+
+      // Transform backend citations to frontend format
+      const formattedCitations = citations.map(cite => ({
         id: cite.id,
         text: cite.text,
         source: cite.source,
@@ -165,8 +236,8 @@ export const chatApi = {
       }));
 
       return {
-        content: backendResponse.content,
-        citations,
+        content: fullContent,
+        citations: formattedCitations,
         suggestions: HARDCODED_SUGGESTIONS
       };
     } catch (error) {
